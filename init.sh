@@ -185,7 +185,7 @@ read -p "[Openstack-client] Would you like to install it? <y|n>: " OPENSTACKCLIE
 sync
 
 if [ "${OPENSTACKCLIENT_INSTALL}" = "y" ]; then
-	sudo add-apt-repository cloud-archive:stein -y
+	sudo add-apt-repository cloud-archive:wallaby -y
 	apt update -y
         apt dist-upgrade -y
 	apt install python3-openstackclient -y
