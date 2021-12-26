@@ -1,4 +1,4 @@
-# OpenStack-Stein
+# OpenStack-Wallaby
 Installation Script for OpenStack Stein based on ARM Server (`ubuntu20.04`)
 
 
@@ -14,7 +14,7 @@ Here, a shell script is written based on the contents of the [Wiki](https://gith
 ```bash
 # sudo su
 # cd
-# git clone https://github.com/shhan0226/OpenStack-Stein.git
+# git clone https://github.com/shhan0226/OpenStack-Wallaby.git
 ```
 
 ### Step.1 Prerequisites
