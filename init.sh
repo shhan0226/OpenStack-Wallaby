@@ -37,6 +37,7 @@ if [ "${PY_INSTALL}" = "y" ]; then
 else
 	apt install python3-pip -y
 	sudo apt install software-properties-common build-essential python3 python3-pip python-is-python3 libgtk-3-dev -y
+	sudo apt install net-tools -y
 fi
 
 ##################################
