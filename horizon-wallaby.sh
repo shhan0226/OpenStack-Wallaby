@@ -15,8 +15,7 @@ echo "Service Install ..."
 apt install openstack-dashboard -y
 cp /etc/openstack-dashboard/local_settings.py /etc/openstack-dashboard/local_settings.py.backup
 
-#
-sed -i "http://%s:5000/v3"/"http://%s/identity/v3" /etc/openstack-dashboard/local_settings.py
+sed -i 's/http:\/\/\%s\/identity\/v3/http:\/\/\%s:5000\/v3/' /etc/openstack-dashboard/local_settings.py
 
 sed -i 's/#OPENSTACK_API_VERSIONS = {/OPENSTACK_API_VERSIONS = {/' /etc/openstack-dashboard/local_settings.py
 sed -i 's/#    "identity": 3,/    "identity": 3,/' /etc/openstack-dashboard/local_settings.py

@@ -35,8 +35,9 @@ if [ "${PY_INSTALL}" = "y" ]; then
 	update-alternatives --config python
 	sudo -H pip3 install --upgrade pip
 else
+	echo "ubuntu 20.04 ........."
 	apt install python3-pip -y
-	sudo apt install software-properties-common build-essential python3 python3-pip python-is-python3 libgtk-3-dev -y
+	sudo apt install net-tools software-properties-common build-essential python3 python3-pip python-is-python3 libgtk-3-dev -y
 	sudo apt install net-tools -y
 fi
 

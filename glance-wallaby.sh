@@ -73,7 +73,13 @@ echo "download img"
 
 wget http://download.cirros-cloud.net/0.5.1/cirros-0.5.1-arm-disk.img
 
+
+sync
+
+. admin-openrc
+
 # openstack image create "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --public
+
 glance image-create --name "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --visibility=public
 
 # openstack image list
