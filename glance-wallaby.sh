@@ -79,6 +79,7 @@ sync
 . admin-openrc
 
 # openstack image create "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --public
+echo "create image ..."
 
 glance image-create --name "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --visibility=public
 

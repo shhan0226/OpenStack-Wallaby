@@ -29,7 +29,8 @@ sed -i 's/#OPENSTACK_KEYSTONE_DEFAULT_DOMAIN = 'Default'/OPENSTACK_KEYSTONE_DEFA
 
 sed -i "s/'LOCATION': '127.0.0.1:11211',/'LOCATION': '${SET_IP}:11211',/" /etc/openstack-dashboard/local_settings.py
 
-crudini --set local_settings.py '' OPENSTACK_HOST ${SET_IP}
+#crudini --set local_settings.py '' OPENSTACK_HOST ${SET_IP}
+sed -i 's/OPENSTACK_HOST = "127.0.0.1"/OPENSTACK_HOST = "${SET_IP}"/' /etc/openstack-dashboard/local_settings.py
 
 # sed -i 's/OPENSTACK_KEYSTONE_DEFAULT_ROLE = "_member_"/OPENSTACK_KEYSTONE_DEFAULT_ROLE = "user"/' /etc/openstack-dashboard/local_settings.py
 
