@@ -3,6 +3,10 @@
 read -p "What is openstack passwrd? : " STACK_PASSWD
 echo "$STACK_PASSWD"
 
+sudo apt install net-tools -y
+ifconfig
+read -p "Input Contorller IP: (ex.192.168.0.2) " SET_IP
+
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -34,16 +38,16 @@ openstack role add --project service --user nova admin
 
 openstack service create --name nova --description "OpenStack Compute" compute
 
-openstack endpoint create --region RegionOne compute public http://controller:8774/v2.1
-openstack endpoint create --region RegionOne compute internal http://controller:8774/v2.1
-openstack endpoint create --region RegionOne compute admin http://controller:8774/v2.1
+openstack endpoint create --region RegionOne compute public http://${SET_IP}:8774/v2.1
+openstack endpoint create --region RegionOne compute internal http://${SET_IP}:8774/v2.1
+openstack endpoint create --region RegionOne compute admin http://${SET_IP}:8774/v2.1
 
 
 ##################################
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "IP Setting ..."
-ifconfig
-read -p "Input IP: " SET_IP
+#echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
+#echo "IP Setting ..."
+#ifconfig
+#read -p "Input IP: " SET_IP
 
 
 ##########################################
@@ -54,14 +58,15 @@ echo "Install Nova Packages ..."
 #apt install nova-consoleauth -y
 #apt install nova-novncproxy -y
 #apt install nova-scheduler -y
+
 apt install nova-api nova-conductor nova-novncproxy nova-scheduler -y
 
-crudini --set /etc/nova/nova.conf api_database connection mysql+pymysql://nova:${STACK_PASSWD}@controller/nova_api
+crudini --set /etc/nova/nova.conf api_database connection mysql+pymysql://nova:${STACK_PASSWD}@${SET_IP}/nova_api
 
-crudini --set /etc/nova/nova.conf database connection mysql+pymysql://nova:${STACK_PASSWD}@controller/nova
+crudini --set /etc/nova/nova.conf database connection mysql+pymysql://nova:${STACK_PASSWD}@${SET_IP}/nova
 
 #crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@controller
-crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@controller:5672/
+crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${SET_IP}:5672/
 
 crudini --set /etc/nova/nova.conf my_ip ${SET_IP}
 #crudini --set /etc/nova/nova.conf use_neutron true
@@ -69,10 +74,10 @@ crudini --set /etc/nova/nova.conf my_ip ${SET_IP}
 
 crudini --set /etc/nova/nova.conf api auth_strategy keystone
 
-crudini --set /etc/nova/nova.conf keystone_authtoken www_authenticate_uri http://controller:5000/
+crudini --set /etc/nova/nova.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000/
 #crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://controller:5000/v3
-crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://controller:5000/
-crudini --set /etc/nova/nova.conf keystone_authtoken memcached_servers controller:11211
+crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${SET_IP}:5000/
+crudini --set /etc/nova/nova.conf keystone_authtoken memcached_servers ${SET_IP}:11211
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_type password
 crudini --set /etc/nova/nova.conf keystone_authtoken project_domain_name Default
 crudini --set /etc/nova/nova.conf keystone_authtoken user_domain_name Default
@@ -84,7 +89,7 @@ crudini --set /etc/nova/nova.conf vnc enabled true
 crudini --set /etc/nova/nova.conf vnc server_listen \$my_ip
 crudini --set /etc/nova/nova.conf vnc server_proxyclient_address \$my_ip
 
-crudini --set /etc/nova/nova.conf glance api_servers http://controller:9292
+crudini --set /etc/nova/nova.conf glance api_servers http://${SET_IP}:9292
 
 crudini --set /etc/nova/nova.conf oslo_concurrency lock_path /var/lib/nova/tmp
 
@@ -93,7 +98,7 @@ crudini --set /etc/nova/nova.conf placement project_domain_name Default
 crudini --set /etc/nova/nova.conf placement project_name service
 crudini --set /etc/nova/nova.conf placement auth_type password
 crudini --set /etc/nova/nova.conf placement user_domain_name Default
-crudini --set /etc/nova/nova.conf placement auth_url http://controller:5000/v3
+crudini --set /etc/nova/nova.conf placement auth_url http://${SET_IP}:5000/v3
 crudini --set /etc/nova/nova.conf placement username placement
 crudini --set /etc/nova/nova.conf placement password ${STACK_PASSWD}
 

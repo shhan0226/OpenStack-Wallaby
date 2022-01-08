@@ -3,6 +3,11 @@
 read -p "What is openstack passwrd? : " STACK_PASSWD
 echo "$STACK_PASSWD"
 
+sudo apt install net-tools -y
+ifconfig
+read -p "Input Contorller IP: (ex.192.168.0.2) " SET_IP
+
+
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Keystone Reg. Mariadb ..."
@@ -16,7 +21,7 @@ mysql -e "FLUSH PRIVILEGES"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Keystone ..."
 apt install keystone -y
-crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@controller/keystone
+crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@${SET_IP}/keystone
 crudini --set /etc/keystone/keystone.conf token provider fernet
 
 
@@ -32,7 +37,7 @@ keystone-manage credential_setup --keystone-user keystone --keystone-group keyst
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Keystone Bootstrap ..."
-keystone-manage bootstrap --bootstrap-password ${STACK_PASSWD} --bootstrap-admin-url http://controller:5000/v3/ --bootstrap-internal-url http://controller:5000/v3/ --bootstrap-public-url http://controller:5000/v3/ --bootstrap-region-id RegionOne
+keystone-manage bootstrap --bootstrap-password ${STACK_PASSWD} --bootstrap-admin-url http://${SET_IP}:5000/v3/ --bootstrap-internal-url http://${SET_IP}:5000/v3/ --bootstrap-public-url http://${SET_IP}:5000/v3/ --bootstrap-region-id RegionOne
 
 
 ##########################################
@@ -57,7 +62,7 @@ export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
 export OS_PASSWORD=${STACK_PASSWD}
-export OS_AUTH_URL=http://controller:5000/v3
+export OS_AUTH_URL=http://${SET_IP}:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 EOF
@@ -69,7 +74,7 @@ export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_NAME=myproject
 export OS_USERNAME=myuser
 export OS_PASSWORD=${STACK_PASSWD}
-export OS_AUTH_URL=http://controller:5000/v3
+export OS_AUTH_URL=http://${SET_IP}:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 EOF
@@ -101,11 +106,11 @@ sync
 unset OS_AUTH_URL OS_PASSWORD
 sync
 
-openstack --os-auth-url http://controller:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name admin --os-username admin token issue
+openstack --os-auth-url http://${SET_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name admin --os-username admin token issue
 
 sync
 
-openstack --os-auth-url http://controller:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name myproject --os-username myuser token issue
+openstack --os-auth-url http://${SET_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name myproject --os-username myuser token issue
 
 sync
 

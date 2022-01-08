@@ -3,6 +3,11 @@
 read -p "What is openstack passwrd? : " STACK_PASSWD
 echo "$STACK_PASSWD"
 
+sudo apt install net-tools -y
+ifconfig
+read -p "Input Contorller IP: (ex.192.168.0.2) " SET_IP
+
+
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "GLANCE Reg. Mariadb ..."
@@ -23,11 +28,11 @@ openstack role add --project service --user glance admin
 
 openstack service create --name glance --description "OpenStack Image" image
 
-openstack endpoint create --region RegionOne image public http://controller:9292
+openstack endpoint create --region RegionOne image public http://${SET_IP}:9292
 
-openstack endpoint create --region RegionOne image internal http://controller:9292
+openstack endpoint create --region RegionOne image internal http://${SET_IP}:9292
 
-openstack endpoint create --region RegionOne image admin http://controller:9292
+openstack endpoint create --region RegionOne image admin http://${SET_IP}:9292
 
 
 ##########################################
@@ -35,11 +40,11 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Glance ..."
 apt install glance -y
 
-crudini --set /etc/glance/glance-api.conf database connection mysql+pymysql://glance:${STACK_PASSWD}@controller/glance
+crudini --set /etc/glance/glance-api.conf database connection mysql+pymysql://glance:${STACK_PASSWD}@${SET_IP}/glance
 
-crudini --set /etc/glance/glance-api.conf keystone_authtoken www_authenticate_uri http://controller:5000
-crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://controller:5000
-crudini --set /etc/glance/glance-api.conf keystone_authtoken memcached_servers controller:11211
+crudini --set /etc/glance/glance-api.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000
+crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://${SET_IP}:5000
+crudini --set /etc/glance/glance-api.conf keystone_authtoken memcached_servers ${SET_IP}:11211
 crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_type password
 crudini --set /etc/glance/glance-api.conf keystone_authtoken project_domain_name Default
 crudini --set /etc/glance/glance-api.conf keystone_authtoken user_domain_name Default

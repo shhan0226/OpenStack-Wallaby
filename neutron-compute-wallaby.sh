@@ -8,7 +8,9 @@ read -p "Input provider name? : " PROVIDER
 echo "$PROVIDER"
 sync
 
-read -p "Input IP: " SET_IP
+ifconfig
+read -p "Input Contorller IP: (ex.192.168.0.2) " CON_IP
+read -p "Input Compute IP: " SET_IP
 echo "$SET_IP"
 sync
 
@@ -17,12 +19,12 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 apt install neutron-linuxbridge-agent -y
 
 echo "NEUTRON conf. ..."
-crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@controller 
+crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${CON_IP}
 crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
 
-crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://controller:5000
-crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://controller:5000
-crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers controller:11211
+crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://${CON_IP}:5000
+crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://${CON_IP}:5000
+crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers ${CON_IP}:11211
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_type password
 crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name default
 crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name default
@@ -49,7 +51,7 @@ sysctl net.bridge.bridge-nf-call-iptables
 sysctl net.bridge.bridge-nf-call-ip6tables
 
 #crudini --set /etc/nova/nova.conf neutron url http://controller:9696
-crudini --set /etc/nova/nova.conf neutron auth_url http://controller:5000
+crudini --set /etc/nova/nova.conf neutron auth_url http://${CON_IP}:5000
 crudini --set /etc/nova/nova.conf neutron auth_type password
 crudini --set /etc/nova/nova.conf neutron project_domain_name default
 crudini --set /etc/nova/nova.conf neutron user_domain_name default

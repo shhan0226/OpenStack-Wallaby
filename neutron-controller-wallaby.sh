@@ -33,11 +33,11 @@ openstack role add --project service --user neutron admin
 
 openstack service create --name neutron --description "OpenStack Networking" network
 
-openstack endpoint create --region RegionOne network public http://controller:9696
+openstack endpoint create --region RegionOne network public http://${SET_IP}:9696
 
-openstack endpoint create --region RegionOne network internal http://controller:9696
+openstack endpoint create --region RegionOne network internal http://${SET_IP}:9696
 
-openstack endpoint create --region RegionOne network admin http://controller:9696
+openstack endpoint create --region RegionOne network admin http://${SET_IP}:9696
 
 
 ##########################################
@@ -51,19 +51,19 @@ apt install neutron-l3-agent -y
 apt install neutron-dhcp-agent -y
 apt install neutron-metadata-agent -y
 
-crudini --set /etc/neutron/neutron.conf database connection mysql+pymysql://neutron:${STACK_PASSWD}@controller/neutron
+crudini --set /etc/neutron/neutron.conf database connection mysql+pymysql://neutron:${STACK_PASSWD}@${SET_IP}/neutron
 
 crudini --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
 crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router
 crudini --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips true
-crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@controller
+crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${SET_IP}
 crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
 crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_status_changes true
 crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_data_changes true
 
-crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://controller:5000
-crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://controller:5000
-crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers controller:11211
+crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000
+crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://${SET_IP}:5000
+crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers ${SET_IP}:11211
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_type password
 crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name default
 crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name default
@@ -71,7 +71,7 @@ crudini --set /etc/neutron/neutron.conf keystone_authtoken project_name service
 crudini --set /etc/neutron/neutron.conf keystone_authtoken username neutron
 crudini --set /etc/neutron/neutron.conf keystone_authtoken password ${STACK_PASSWD}
 
-crudini --set /etc/neutron/neutron.conf nova auth_url http://controller:5000
+crudini --set /etc/neutron/neutron.conf nova auth_url http://${SET_IP}:5000
 crudini --set /etc/neutron/neutron.conf nova auth_type password
 crudini --set /etc/neutron/neutron.conf nova project_domain_name default
 crudini --set /etc/neutron/neutron.conf nova user_domain_name default
@@ -129,7 +129,7 @@ crudini --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_host control
 crudini --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret ${STACK_PASSWD}
 
 #crudini --set /etc/nova/nova.conf neutron url http://controller:9696 
-crudini --set /etc/nova/nova.conf neutron auth_url http://controller:5000
+crudini --set /etc/nova/nova.conf neutron auth_url http://${SET_IP}:5000
 crudini --set /etc/nova/nova.conf neutron auth_type password
 crudini --set /etc/nova/nova.conf neutron project_domain_name default
 crudini --set /etc/nova/nova.conf neutron user_domain_name default
