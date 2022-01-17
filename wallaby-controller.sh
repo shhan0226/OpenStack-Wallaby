@@ -32,7 +32,6 @@ echo "$STACK_PASSWD"
 read -p "please input the allow IP (ex 192.168.0.0/24): " SET_IP_ALLOW
 echo "$SET_IP_ALLOW"
 
-
 ##################################
 # update apt
 ##################################
@@ -101,7 +100,6 @@ tar xvf crudini-0.9.3.tar.gz
 mv crudini-0.9.3/crudini /usr/bin/
 pip3 install iniparse
 rm -rf crudini-0.9.3 crudini-0.9.3.tar.gz
-
 sync
 cd ~
 
@@ -234,7 +232,6 @@ echo ">"
 echo "----------------------------------------------------------"
 echo "THE END !!!"
 
-
 ##########################################
 # keystone
 ##########################################
@@ -322,7 +319,6 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 . admin-openrc
 openstack token issue
 
-
 ##########################################
 # Glance
 ##########################################
@@ -380,17 +376,16 @@ service glance-api restart
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "download img"
 . admin-openrc
-
 wget http://download.cirros-cloud.net/0.5.1/cirros-0.5.1-arm-disk.img
-
 sync
+
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "create image ..."
 . admin-openrc
 glance image-create --name "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --visibility=public
+sync
 glance image-list
-
 
 ##########################################
 # Placement
@@ -455,7 +450,6 @@ pip install osc-placement
 openstack --os-placement-api-version 1.2 resource class list --sort-column name
 openstack --os-placement-api-version 1.6 trait list --sort-column name
 
-
 ##########################################
 # Nova
 ##########################################
@@ -490,7 +484,6 @@ openstack service create --name nova --description "OpenStack Compute" compute
 openstack endpoint create --region RegionOne compute public http://${CONTROLLER_IP}:8774/v2.1
 openstack endpoint create --region RegionOne compute internal http://${CONTROLLER_IP}:8774/v2.1
 openstack endpoint create --region RegionOne compute admin http://${CONTROLLER_IP}:8774/v2.1
-
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -562,7 +555,7 @@ service nova-conductor restart
 service nova-novncproxy restart
 sync
 
-
+##########################################
 echo "Insert Nova-Compute"
 echo "Inpute script 'nova-check-to-compute.sh' & 'neutron-controller-wallaby.sh'"
 
