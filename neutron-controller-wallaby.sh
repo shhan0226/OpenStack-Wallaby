@@ -125,7 +125,7 @@ crudini --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata true
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Neutron Service conf ..."
-crudini --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_host controller
+crudini --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_host ${SET_IP}
 crudini --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret ${STACK_PASSWD}
 
 #crudini --set /etc/nova/nova.conf neutron url http://controller:9696 
