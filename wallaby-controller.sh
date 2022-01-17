@@ -258,7 +258,6 @@ sync
 keystone-manage fernet_setup --keystone-user keystone --keystone-group keystone
 keystone-manage credential_setup --keystone-user keystone --keystone-group keystone
 
-
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Keystone Bootstrap ..."
@@ -383,6 +382,8 @@ sync
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "create image ..."
+service glance-api restart
+sync
 . admin-openrc
 glance image-create --name "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --visibility=public
 sync
@@ -433,7 +434,7 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "REG. DB  Placement ..."
 
 su -s /bin/sh -c "placement-manage db sync" placement
-su -s /bin/sh -c "placement-manage db sync" placement
+#su -s /bin/sh -c "placement-manage db sync" placement
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"

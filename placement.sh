@@ -57,7 +57,7 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "REG. DB  Placement ..."
 
 su -s /bin/sh -c "placement-manage db sync" placement
-su -s /bin/sh -c "placement-manage db sync" placement
+#su -s /bin/sh -c "placement-manage db sync" placement
 
 
 ##########################################
