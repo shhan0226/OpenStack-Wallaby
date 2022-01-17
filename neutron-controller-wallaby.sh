@@ -21,24 +21,17 @@ mysql -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'localhost' IDENTIFIED 
 mysql -e "GRANT ALL PRIVILEGES ON neutron.* TO 'neutron'@'%' IDENTIFIED BY '${STACK_PASSWD}';"
 mysql -e "FLUSH PRIVILEGES"
 
-
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo " Openstack Reg. ..."
 . admin-openrc
-
 openstack user create --domain default --password ${STACK_PASSWD} neutron
-
 openstack role add --project service --user neutron admin
-
 openstack service create --name neutron --description "OpenStack Networking" network
 
 openstack endpoint create --region RegionOne network public http://${SET_IP}:9696
-
 openstack endpoint create --region RegionOne network internal http://${SET_IP}:9696
-
 openstack endpoint create --region RegionOne network admin http://${SET_IP}:9696
-
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -93,12 +86,9 @@ crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 mechanism_drivers linuxb
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 extension_drivers port_security
 
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_flat flat_networks provider
-
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_vxlan vni_ranges 1:1000
 
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup enable_ipset true
-
-
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini linux_bridge physical_interface_mappings provider:${PROVIDER}
 
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan enable_vxlan true 
@@ -107,7 +97,6 @@ crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan l2_population
 
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup enable_security_group true
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
-
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -120,7 +109,6 @@ crudini --set /etc/neutron/l3_agent.ini DEFAULT interface_driver linuxbridge
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT interface_driver linuxbridge
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata true
-
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -140,12 +128,10 @@ crudini --set /etc/nova/nova.conf neutron password ${STACK_PASSWD}
 crudini --set /etc/nova/nova.conf neutron service_metadata_proxy true
 crudini --set /etc/nova/nova.conf neutron metadata_proxy_shared_secret ${STACK_PASSWD}
 
-
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Neutron DB Create ..."
 su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
-
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
