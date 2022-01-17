@@ -563,5 +563,6 @@ service nova-novncproxy restart
 sync
 
 
-echo "Please input 'nova-check-to-compute.sh' & 'neutron-controller-wallaby.sh' "
+echo "Insert Nova-Compute"
+echo "Inpute script 'nova-check-to-compute.sh' & 'neutron-controller-wallaby.sh'"
 
