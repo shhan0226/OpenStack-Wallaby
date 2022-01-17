@@ -18,6 +18,7 @@ fi
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "IP Setting ..."
+sudo apt install net-tools -y
 ifconfig
 read -p "Input Contorller IP: (ex.192.168.0.2) " CONTROLLER_IP
 read -p "Input Compute IP: (ex.192.168.0.3) " COMPUTE_IP
