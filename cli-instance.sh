@@ -22,7 +22,8 @@ StartTime=$(date +%s)
 
 ##################################
 echo "server create..."
-. demo-openrc
+#. demo-openrc
+. admin-openrc
 openstack server create --image ubuntu1804 --flavor arm-flavor --key-name arm-key --network internal --user-data init.sh --security-group arm-secu Web-instance
 
 echo "server list..."
@@ -38,8 +39,8 @@ echo "It takes $(($EndTime - $StartTime)) seconds to complete this task."
 ##################################
 # Add Floating IP
 ##################################
-. demo-openrc
-
+#. demo-openrc
+. admin-openrc
 echo "floating ip create..."
 openstack floating ip create external
 
@@ -48,7 +49,8 @@ sync
 echo "db-instance ${F_IP}"
 sync
 
-. demo-openrc
+#. demo-openrc
+. admin-openrc
 echo "server add floating ip..."
 openstack server add floating ip Web-instance ${F_IP}
 

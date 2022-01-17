@@ -53,7 +53,8 @@ sync
 ##################################
 # create Internal Net
 ##################################
-. demo-openrc
+#. demo-openrc
+. admin-openrc
 sync
 echo "internal net..."
 openstack network create internal
@@ -64,7 +65,8 @@ sync
 ##################################
 # create Subnet Internal Net
 ##################################
-. demo-openrc
+#. demo-openrc
+. admin-openrc
 sync
 echo "insternal sub net..."
 openstack subnet create --subnet-range 172.16.0.0/24 --dhcp --network internal --dns-nameserver 8.8.8.8 internal-subnet
@@ -74,7 +76,8 @@ sync
 ##################################
 # create Router
 ##################################
-. demo-openrc
+#. demo-openrc
+. admin-openrc
 sync
 echo "route create..."
 openstack router create arm-router
@@ -93,8 +96,8 @@ sync
 ##################################
 # create keypair
 ##################################
-. demo-openrc
-
+#. demo-openrc
+. admin-openrc
 echo "keypair list..."
 openstack keypair list
 openstack keypair create arm-key > arm-key.pem
@@ -103,8 +106,8 @@ openstack keypair create arm-key > arm-key.pem
 ##################################
 # create Secu.
 ##################################
-. demo-openrc
-
+#. demo-openrc
+. admin-openrc
 echo "security list..."
 openstack security group create arm-secu
 
@@ -124,7 +127,8 @@ openstack security group show arm-secu
 ##################################
 # create init.sh
 ##################################
-. demo-openrc
+#. demo-openrc
+. admin-openrc
 
 cat << EOF >init.sh
 #cloud-config
