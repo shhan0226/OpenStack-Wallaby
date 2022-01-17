@@ -29,6 +29,8 @@ echo "$COMPUTE_IP compute" >> /etc/hosts
 ##################################
 read -p "What is openstack passwrd? : " STACK_PASSWD
 echo "$STACK_PASSWD"
+read -p "please input the allow IP (ex 192.168.0.0/24): " SET_IP_ALLOW
+echo "$SET_IP_ALLOW"
 
 
 ##################################
@@ -46,8 +48,8 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Python & pip SET ..."
 echo "ubuntu 20.04 ........."
 apt install python3-pip -y
-sudo apt install net-tools software-properties-common build-essential python3 python3-pip python-is-python3 libgtk-3-dev python3-etcd3gw -y
 sudo apt install net-tools -y
+sudo apt install -y software-properties-common build-essential python3 python3-pip python-is-python3 libgtk-3-dev python3-etcd3gw
 
 ##################################
 # Install git
@@ -73,11 +75,9 @@ apt install python3-pymysql -y
 # Install NTP
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "INSTALL NTP ...
+echo "INSTALL NTP ..."
 apt install chrony -y
-echo "server $SET_IP iburst" >> /etc/chrony/chrony.conf
-read -p "please input the allow IP (ex 192.168.0.0/24): " SET_IP_ALLOW
-echo "$SET_IP_ALLOW"
+echo "server $CONTROLLER_IP iburst" >> /etc/chrony/chrony.conf
 echo "allow $SET_IP_ALLOW" >> /etc/chrony/chrony.conf
 service chrony restart
 chronyc sources
@@ -180,11 +180,11 @@ echo "name: controller" >> /etc/etcd/etcd.conf.yml
 echo "data-dir: /var/lib/etcd" >> /etc/etcd/etcd.conf.yml
 echo "initial-cluster-state: \'new\'" >> /etc/etcd/etcd.conf.yml
 echo "initial-cluster-token: \'etcd-cluster-01\'" >> /etc/etcd/etcd.conf.yml
-echo "initial-cluster: controller=http://${SET_IP}:2380" >> /etc/etcd/etcd.conf.yml
-echo "initial-advertise-peer-urls: http://${SET_IP}:2380" >> /etc/etcd/etcd.conf.yml
-echo "advertise-client-urls: http://${SET_IP}:2379" >> /etc/etcd/etcd.conf.yml
+echo "initial-cluster: controller=http://${CONTROLLER_IP}:2380" >> /etc/etcd/etcd.conf.yml
+echo "initial-advertise-peer-urls: http://${CONTROLLER_IP}:2380" >> /etc/etcd/etcd.conf.yml
+echo "advertise-client-urls: http://${CONTROLLER_IP}:2379" >> /etc/etcd/etcd.conf.yml
 echo "listen-peer-urls: http://0.0.0.0:2380" >> /etc/etcd/etcd.conf.yml
-echo "listen-client-urls: http://${SET_IP}:2379" >> /etc/etcd/etcd.conf.yml
+echo "listen-client-urls: http://${CONTROLLER_IP}:2379" >> /etc/etcd/etcd.conf.yml
 sync
 touch /lib/systemd/system/etcd.service
 echo "[Unit]" >> /lib/systemd/system/etcd.service
