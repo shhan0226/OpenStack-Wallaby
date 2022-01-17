@@ -20,8 +20,8 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "IP Setting ..."
 sudo apt install net-tools -y
 ifconfig
-read -p "Input Contorller IP: (ex.192.168.0.2) " CONTROLLER_IP
-read -p "Input Compute IP: (ex.192.168.0.3) " COMPUTE_IP
+read -p "Input Contorller IP (ex.192.168.0.2) : " CONTROLLER_IP
+read -p "Input Compute IP (ex.192.168.0.3) : " COMPUTE_IP
 echo "$CONTROLLER_IP controller" >> /etc/hosts
 echo "$COMPUTE_IP compute" >> /etc/hosts
 
