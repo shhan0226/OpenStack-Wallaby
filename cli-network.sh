@@ -35,7 +35,7 @@ StartTime=$(date +%s)
 . admin-openrc
 sync
 echo "external net..."
-openstack network create --external --provider-network-type flat --provider-physical-network provider external
+openstack network create --share --external --provider-network-type flat --provider-physical-network provider external
 
 
 ##################################
