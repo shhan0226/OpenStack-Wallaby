@@ -48,6 +48,10 @@ crudini --set /etc/neutron/neutron.conf database connection mysql+pymysql://neut
 
 crudini --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
 crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router
+
+##
+crudini --set /etc/neutron/neutron.conf DEFAULT dhcp_agent_notification true
+
 crudini --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips true
 crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${SET_IP}
 crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
@@ -78,34 +82,29 @@ crudini --set /etc/neutron/neutron.conf oslo_concurrency lock_path /var/lib/neut
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "ml2 ..."
-
+echo "Configure the Modular Layer 2 (ML2) plug-in ..."
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 type_drivers flat,vlan,vxlan
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 tenant_network_types vxlan
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 mechanism_drivers linuxbridge,l2population
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2 extension_drivers port_security
-
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_flat flat_networks provider
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_vxlan vni_ranges 1:1000
-
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup enable_ipset true
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini linux_bridge physical_interface_mappings provider:${PROVIDER}
 
+echo "Configure the Linux bridge agent ..."
+crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini linux_bridge physical_interface_mappings provider:${PROVIDER}
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan enable_vxlan true 
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan local_ip ${SET_IP}
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan l2_population true
-
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup enable_security_group true
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
-
-##########################################
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "bridge ..."
 sysctl net.bridge.bridge-nf-call-iptables
 sysctl net.bridge.bridge-nf-call-ip6tables
 
+echo "Configure the layer-3 agent ..."
 crudini --set /etc/neutron/l3_agent.ini DEFAULT interface_driver linuxbridge
 
+echo "Configure the DHCP agent..."
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT interface_driver linuxbridge
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT dhcp_driver neutron.agent.linux.dhcp.Dnsmasq
 crudini --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata true
@@ -113,10 +112,12 @@ crudini --set /etc/neutron/dhcp_agent.ini DEFAULT enable_isolated_metadata true
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Neutron Service conf ..."
+
+echo "Configure the metadata agent ..."
 crudini --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_host ${SET_IP}
 crudini --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret ${STACK_PASSWD}
 
-#crudini --set /etc/nova/nova.conf neutron url http://controller:9696 
+echo "Configure the Compute service to use the Networking service ..."
 crudini --set /etc/nova/nova.conf neutron auth_url http://${SET_IP}:5000
 crudini --set /etc/nova/nova.conf neutron auth_type password
 crudini --set /etc/nova/nova.conf neutron project_domain_name default

@@ -28,7 +28,7 @@ echo "$COMPUTE_IP compute" >> /etc/hosts
 ##################################
 # stack passwrd
 ##################################
-read -p "What is openstack passwrd? : " STACK_PASSWD
+read -p "What is openstack password? : " STACK_PASSWD
 echo "$STACK_PASSWD"
 read -p "please input the allow IP (ex 192.168.0.0/24): " SET_IP_ALLOW
 echo "$SET_IP_ALLOW"
@@ -247,7 +247,10 @@ mysql -e "FLUSH PRIVILEGES"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Keystone ..."
 apt install keystone -y
-# apt install -y apache2 libapache2-mod-wsgi-py3 python3-oauth2client
+
+##
+apt install -y apache2 libapache2-mod-wsgi-py3 python3-oauth2client
+
 crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@${CONTROLLER_IP}/keystone
 crudini --set /etc/keystone/keystone.conf token provider fernet
 
@@ -347,6 +350,11 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Glance ..."
 apt install glance -y
 
+##
+crudini --set /etc/glance/glance-api.conf DEFAULT bind_host ${CONTROLLER_IP}
+
+
+
 crudini --set /etc/glance/glance-api.conf database connection mysql+pymysql://glance:${STACK_PASSWD}@${CONTROLLER_IP}/glance
 crudini --set /etc/glance/glance-api.conf keystone_authtoken www_authenticate_uri http://${CONTROLLER_IP}:5000
 crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://${CONTROLLER_IP}:5000
@@ -372,6 +380,9 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "service restart"
 service glance-api restart
 
+##
+systemctl enable glance-api
+
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "download img"
@@ -383,6 +394,7 @@ sync
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "create image ..."
 service glance-api restart
+
 sync
 . admin-openrc
 glance image-create --name "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --visibility=public
@@ -420,6 +432,7 @@ apt install placement-api -y
 
 crudini --set /etc/placement/placement.conf placement_database connection mysql+pymysql://placement:${STACK_PASSWD}@${CONTROLLER_IP}/placement
 crudini --set /etc/placement/placement.conf api auth_strategy keystone
+crudini --set /etc/placement/placement.conf keystone_authtoken www_authenticate_uri http://${CONTROLLER_IP}:5000
 crudini --set /etc/placement/placement.conf keystone_authtoken auth_url http://${CONTROLLER_IP}:5000/v3   
 crudini --set /etc/placement/placement.conf keystone_authtoken memcached_servers ${CONTROLLER_IP}:11211
 crudini --set /etc/placement/placement.conf keystone_authtoken auth_type password
@@ -480,9 +493,12 @@ openstack role add --project service --user nova admin
 
 openstack service create --name nova --description "OpenStack Compute" compute
 
-openstack endpoint create --region RegionOne compute public http://${CONTROLLER_IP}:8774/v2.1
-openstack endpoint create --region RegionOne compute internal http://${CONTROLLER_IP}:8774/v2.1
-openstack endpoint create --region RegionOne compute admin http://${CONTROLLER_IP}:8774/v2.1
+#openstack endpoint create --region RegionOne compute public http://${CONTROLLER_IP}:8774/v2.1
+#openstack endpoint create --region RegionOne compute internal http://${CONTROLLER_IP}:8774/v2.1
+#openstack endpoint create --region RegionOne compute admin http://${CONTROLLER_IP}:8774/v2.1
+openstack endpoint create --region RegionOne compute public http://${CONTROLLER_IP}:8774/v2.1/%\(tenant_id\)s
+openstack endpoint create --region RegionOne compute internal http://${CONTROLLER_IP}:8774/v2.1/%\(tenant_id\)s
+openstack endpoint create --region RegionOne compute admin http://${CONTROLLER_IP}:8774/v2.1/%\(tenant_id\)s
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -508,12 +524,13 @@ crudini --set /etc/nova/nova.conf vnc server_listen \$my_ip
 crudini --set /etc/nova/nova.conf vnc server_proxyclient_address \$my_ip
 crudini --set /etc/nova/nova.conf glance api_servers http://${CONTROLLER_IP}:9292
 crudini --set /etc/nova/nova.conf oslo_concurrency lock_path /var/lib/nova/tmp
+crudini --set /etc/nova/nova.conf placement auth_url http://${CONTROLLER_IP}:5000/v3
+#crudini --set /etc/nova/nova.conf placement auth_url http://${CONTROLLER_IP}:5000
 crudini --set /etc/nova/nova.conf placement region_name RegionOne 
 crudini --set /etc/nova/nova.conf placement project_domain_name Default
 crudini --set /etc/nova/nova.conf placement project_name service
 crudini --set /etc/nova/nova.conf placement auth_type password
 crudini --set /etc/nova/nova.conf placement user_domain_name Default
-crudini --set /etc/nova/nova.conf placement auth_url http://${CONTROLLER_IP}:5000/v3
 crudini --set /etc/nova/nova.conf placement username placement
 crudini --set /etc/nova/nova.conf placement password ${STACK_PASSWD}
 
@@ -540,6 +557,7 @@ service nova-conductor restart
 service nova-novncproxy restart
 sync
 
+openstack compute service list
 ##########################################
 echo "Insert Nova-Compute"
 echo "Inpute script 'nova-check-to-compute.sh' & 'neutron-controller-wallaby.sh'"
