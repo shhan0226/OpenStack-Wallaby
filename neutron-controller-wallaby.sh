@@ -8,7 +8,7 @@ read -p "Input provider name? : " PROVIDER
 echo "$PROVIDER"
 sync
 
-read -p "Input IP: " SET_IP
+read -p "Input controller IP: " SET_IP
 echo "$SET_IP"
 sync
 
