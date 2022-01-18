@@ -24,7 +24,8 @@ StartTime=$(date +%s)
 echo "server create..."
 #. demo-openrc
 . admin-openrc
-openstack server create --image ubuntu1804 --flavor arm-flavor --key-name arm-key --network internal --user-data init.sh --security-group arm-secu Web-instance
+#openstack server create --image ubuntu1804 --flavor arm-flavor --key-name arm-key --network internal --user-data init.sh --security-group arm-secu Web-instance
+openstack server create --image ubuntu2004 --flavor arm-flavor --key-name arm-key --network internal --user-data init.sh --security-group arm-secu Web-instance
 
 echo "server list..."
 openstack server list
