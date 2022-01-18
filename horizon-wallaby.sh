@@ -15,7 +15,7 @@ apt install openstack-dashboard -y
 cp /etc/openstack-dashboard/local_settings.py /etc/openstack-dashboard/local_settings.py.backup
 sed -i "s/OPENSTACK_HOST = \"127.0.0.1\"/OPENSTACK_HOST = \"${SET_IP}\"/" /etc/openstack-dashboard/local_settings.py
 sed -i "s/'LOCATION': '127.0.0.1:11211',/'LOCATION': '${SET_IP}:11211',/" /etc/openstack-dashboard/local_settings.py
-# sed -i 's/http:\/\/\%s\/identity\/v3/http:\/\/\%s:5000\/v3/' /etc/openstack-dashboard/local_settings.py
+sed -i 's/http:\/\/\%s\/identity\/v3/http:\/\/\%s:5000\/v3/' /etc/openstack-dashboard/local_settings.py
 sed -i 's/#OPENSTACK_API_VERSIONS = {/OPENSTACK_API_VERSIONS = {/' /etc/openstack-dashboard/local_settings.py
 sed -i 's/#    "identity": 3,/    "identity": 3,/' /etc/openstack-dashboard/local_settings.py
 sed -i 's/#    "image": 2,/    "image": 2,/' /etc/openstack-dashboard/local_settings.py
