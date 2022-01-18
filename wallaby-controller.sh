@@ -39,7 +39,7 @@ echo "$SET_IP_ALLOW"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "APT update..."
 apt update -y
-apt dist-upgrade -y
+apt upgrade -y
 
 ##################################
 # Install python
@@ -67,7 +67,7 @@ echo "Install Mariadb ..."
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
 sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://ftp.harukasan.org/mariadb/repo/10.5/ubuntu bionic main'
 apt update -y
-apt dist-upgrade -y
+apt upgrade -y
 apt install mariadb-server -y
 apt install python3-pymysql -y
 
@@ -111,7 +111,7 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Openstack Client ..."
 sudo add-apt-repository cloud-archive:wallaby -y
 apt update -y
-apt dist-upgrade -y
+apt upgrade -y
 apt install python3-openstackclient -y
 openstack --version
 
@@ -218,7 +218,7 @@ sudo systemctl restart etcd
 # apt update
 ##################################
 apt update -y
-apt dist-upgrade -y
+apt upgrade -y
 apt autoremove -y
 echo "=========================================================="
 echo "Openstack installation END !!!"
@@ -247,6 +247,7 @@ mysql -e "FLUSH PRIVILEGES"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Keystone ..."
 apt install keystone -y
+# apt install -y apache2 libapache2-mod-wsgi-py3 python3-oauth2client
 crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@${CONTROLLER_IP}/keystone
 crudini --set /etc/keystone/keystone.conf token provider fernet
 
@@ -305,12 +306,11 @@ echo "Openstack set ..."
 openstack domain create --description "An Example Domain" example
 openstack project create --domain default  --description "Service Project" service
 openstack project create --domain default --description "Demo Project" myproject
-openstack user create --domain default --password ${STACK_PASSWD}  myuser
+openstack user create --domain default --password ${STACK_PASSWD} myuser
 openstack role create myrole
 openstack role add --project myproject --user myuser myrole
 
 unset OS_AUTH_URL OS_PASSWORD
-
 openstack --os-auth-url http://${CONTROLLER_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name admin --os-username admin token issue
 openstack --os-auth-url http://${CONTROLLER_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name myproject --os-username myuser token issue
 
@@ -434,15 +434,12 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "REG. DB  Placement ..."
 
 su -s /bin/sh -c "placement-manage db sync" placement
-#su -s /bin/sh -c "placement-manage db sync" placement
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Service restart"
 service apache2 restart
-
 . admin-openrc
-
 placement-status upgrade check
 
 ##########################################
@@ -490,27 +487,13 @@ openstack endpoint create --region RegionOne compute admin http://${CONTROLLER_I
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Nova Packages ..."
-#apt install nova-api -y
-#apt install nova-conductor -y
-#apt install nova-consoleauth -y
-#apt install nova-novncproxy -y
-#apt install nova-scheduler -y
-
-apt install nova-api nova-conductor nova-novncproxy nova-scheduler -y
+apt install -y nova-api nova-conductor nova-novncproxy nova-scheduler 
 
 crudini --set /etc/nova/nova.conf api_database connection mysql+pymysql://nova:${STACK_PASSWD}@${CONTROLLER_IP}/nova_api
 crudini --set /etc/nova/nova.conf database connection mysql+pymysql://nova:${STACK_PASSWD}@${CONTROLLER_IP}/nova
-
-#crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@controller
 crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${CONTROLLER_IP}:5672/
-
-crudini --set /etc/nova/nova.conf my_ip ${CONTROLLER_IP}
-#crudini --set /etc/nova/nova.conf use_neutron true
-#crudini --set /etc/nova/nova.conf firewall_driver nova.virt.firewall.NoopFirewallDriver
-
 crudini --set /etc/nova/nova.conf api auth_strategy keystone
 crudini --set /etc/nova/nova.conf keystone_authtoken www_authenticate_uri http://${CONTROLLER_IP}:5000/
-#crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://controller:5000/v3
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CONTROLLER_IP}:5000/
 crudini --set /etc/nova/nova.conf keystone_authtoken memcached_servers ${CONTROLLER_IP}:11211
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_type password
@@ -519,6 +502,7 @@ crudini --set /etc/nova/nova.conf keystone_authtoken user_domain_name Default
 crudini --set /etc/nova/nova.conf keystone_authtoken project_name service
 crudini --set /etc/nova/nova.conf keystone_authtoken username nova
 crudini --set /etc/nova/nova.conf keystone_authtoken password ${STACK_PASSWD}
+crudini --set /etc/nova/nova.conf DEFAULT my_ip ${CONTROLLER_IP}
 crudini --set /etc/nova/nova.conf vnc enabled true
 crudini --set /etc/nova/nova.conf vnc server_listen \$my_ip
 crudini --set /etc/nova/nova.conf vnc server_proxyclient_address \$my_ip
@@ -551,7 +535,6 @@ sync
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "service restart"
 service nova-api restart
-#service nova-consoleauth restart
 service nova-scheduler restart
 service nova-conductor restart
 service nova-novncproxy restart
