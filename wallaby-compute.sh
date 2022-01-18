@@ -18,6 +18,7 @@ fi
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "IP Setting ..."
+sudo apt install net-tools -y
 ifconfig
 read -p "Input Contorller IP: (ex.192.168.0.2) " CONTROLLER_IP
 read -p "Input Compute IP: (ex.192.168.0.3) " COMPUTE_IP
@@ -40,7 +41,7 @@ echo "$SET_IP_ALLOW"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "APT update..."
 apt update -y
-apt dist-upgrade -y
+apt upgrade -y
 
 ##################################
 # Install python
@@ -68,7 +69,7 @@ echo "Install Mariadb ..."
 sudo apt-key adv --fetch-keys 'https://mariadb.org/mariadb_release_signing_key.asc'
 sudo add-apt-repository 'deb [arch=amd64,arm64,ppc64el] https://ftp.harukasan.org/mariadb/repo/10.5/ubuntu bionic main'
 apt update -y
-apt dist-upgrade -y
+apt upgrade -y
 apt install mariadb-server -y
 apt install python3-pymysql -y
 
@@ -113,7 +114,7 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Openstack Client ..."
 sudo add-apt-repository cloud-archive:wallaby -y
 apt update -y
-apt dist-upgrade -y
+apt upgrade -y
 apt install python3-openstackclient -y
 openstack --version
 
@@ -122,7 +123,7 @@ openstack --version
 # apt update
 ##################################
 apt update -y
-apt dist-upgrade -y
+apt upgrade -y
 apt autoremove -y
 echo "=========================================================="
 echo "Openstack installation END !!!"
