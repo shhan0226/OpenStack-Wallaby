@@ -19,8 +19,8 @@ fi
 # download img
 ##################################
 apt install wget -y
-wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-arm64.img
-# wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+# wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-arm64.img
+wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
 sync
 
 
@@ -44,8 +44,7 @@ openstack network create --external --provider-network-type flat --provider-phys
 . admin-openrc
 ifconfig
 echo "external sub net..."
-
-openstack subnet create --subnet-range 192.168.0.0/22 --no-dhcp --gateway 192.168.0.1 --network external --dns-nameserver 8.8.8.8 --allocation-pool start=192.168.0.150,end=192.168.0.160 external-subnet
+openstack subnet create --subnet-range 192.168.0.0/22 --no-dhcp --gateway 192.168.0.1 --network external --dns-nameserver 8.8.8.8 --allocation-pool start=192.168.1.100,end=192.168.1.110 external-subnet
 
 sync
 
@@ -157,8 +156,8 @@ openstack flavor list
 
 echo "image create..."
 #openstack image create "ubuntu1804" --file ./bionic-server-cloudimg-arm64.img --disk-format qcow2 --public
-glance image-create --name "ubuntu1804" --file ./bionic-server-cloudimg-arm64.img --disk-format qcow2 --container-format bare --visibility=public
-#glance image-create --name "ubuntu2004" --file ./focal-server-cloudimg-amd64.img --disk-format qcow2 --container-format bare --visibility=public
+#glance image-create --name "ubuntu1804" --file ./bionic-server-cloudimg-arm64.img --disk-format qcow2 --container-format bare --visibility=public
+glance image-create --name "ubuntu2004" --file ./focal-server-cloudimg-amd64.img --disk-format qcow2 --container-format bare --visibility=public
 
 echo "image show..."
 #openstack image show ubuntu1804
