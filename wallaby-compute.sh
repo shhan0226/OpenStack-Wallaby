@@ -165,7 +165,6 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "NOVA Conf. ..."
 
 crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:stack@${CONTROLLER_IP}
-crudini --set /etc/nova/nova.conf DEFAULT my_ip ${COMPUTE_IP}
 crudini --set /etc/nova/nova.conf api auth_strategy keystone
 crudini --set /etc/nova/nova.conf keystone_authtoken www_authenticate_uri http://${CONTROLLER_IP}:5000/
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CONTROLLER_IP}:5000/
@@ -176,6 +175,7 @@ crudini --set /etc/nova/nova.conf keystone_authtoken user_domain_name Default
 crudini --set /etc/nova/nova.conf keystone_authtoken project_name service
 crudini --set /etc/nova/nova.conf keystone_authtoken username nova
 crudini --set /etc/nova/nova.conf keystone_authtoken password ${STACK_PASSWD}
+crudini --set /etc/nova/nova.conf DEFAULT my_ip ${COMPUTE_IP}
 crudini --set /etc/nova/nova.conf vnc enabled true
 crudini --set /etc/nova/nova.conf vnc server_listen 0.0.0.0
 crudini --set /etc/nova/nova.conf vnc server_proxyclient_address \$my_ip
