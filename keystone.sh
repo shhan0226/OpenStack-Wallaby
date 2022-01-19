@@ -37,8 +37,12 @@ keystone-manage credential_setup --keystone-user keystone --keystone-group keyst
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Keystone Bootstrap ..."
-keystone-manage bootstrap --bootstrap-password ${STACK_PASSWD} --bootstrap-admin-url http://${SET_IP}:5000/v3/ --bootstrap-internal-url http://${SET_IP}:5000/v3/ --bootstrap-public-url http://${SET_IP}:5000/v3/ --bootstrap-region-id RegionOne
-
+#keystone-manage bootstrap --bootstrap-password ${STACK_PASSWD} --bootstrap-admin-url http://${SET_IP}:5000/v3/ --bootstrap-internal-url http://${SET_IP}:5000/v3/ --bootstrap-public-url http://${SET_IP}:5000/v3/ --bootstrap-region-id RegionOne
+keystone-manage bootstrap --bootstrap-password ${STACK_PASSWD} \
+  --bootstrap-admin-url http://${SET_IP}:5000/v3/ \
+  --bootstrap-internal-url http://${SET_IP}:5000/v3/ \
+  --bootstrap-public-url http://${SET_IP}:5000/v3/ \
+  --bootstrap-region-id RegionOne
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
