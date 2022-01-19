@@ -204,8 +204,13 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "NOVA CONF. ..."
 crudini --set /etc/nova/nova-compute.conf libvirt virt_type kvm
 
-
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "SERVICE RESTART ..."
 service nova-compute restart
+
+##################################
+echo "###################################"
+echo "cp ./OpenStack-Wallaby/neutron-compute-wallaby.sh ."
+echo "./neutron-compute-wallaby.sh "
+

@@ -541,6 +541,9 @@ service nova-novncproxy restart
 sync
 
 ##########################################
-echo "Insert Nova-Compute"
-echo "Inpute script 'nova-check-to-compute.sh' & 'neutron-controller-wallaby.sh'"
-
+echo "###################################"
+echo "Insert Nova-Compute ..."
+echo "cp ./OpenStack-Wallaby/nova-check-to-compute.sh ."
+echo "./nova-check-to-compute.sh"
+echo "cp ./OpenStack-Wallaby/neutron-controller-wallaby.sh . "
+echo "./neutron-controller-wallaby.sh"
