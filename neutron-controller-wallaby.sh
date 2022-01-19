@@ -48,37 +48,36 @@ crudini --set /etc/neutron/neutron.conf database connection mysql+pymysql://neut
 
 crudini --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
 crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router
-
-##
-crudini --set /etc/neutron/neutron.conf DEFAULT dhcp_agent_notification true
-
 crudini --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips true
+
+## crudini --set /etc/neutron/neutron.conf DEFAULT dhcp_agent_notification true
+
 crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${SET_IP}
 crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
-crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_status_changes true
-crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_data_changes true
 
 crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://${SET_IP}:5000
 crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers ${SET_IP}:11211
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_type password
-crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name default
-crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name default
+crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name Default
+crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name Default
 crudini --set /etc/neutron/neutron.conf keystone_authtoken project_name service
 crudini --set /etc/neutron/neutron.conf keystone_authtoken username neutron
 crudini --set /etc/neutron/neutron.conf keystone_authtoken password ${STACK_PASSWD}
 
+crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_status_changes true
+crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_data_changes true
+
 crudini --set /etc/neutron/neutron.conf nova auth_url http://${SET_IP}:5000
 crudini --set /etc/neutron/neutron.conf nova auth_type password
-crudini --set /etc/neutron/neutron.conf nova project_domain_name default
-crudini --set /etc/neutron/neutron.conf nova user_domain_name default
+crudini --set /etc/neutron/neutron.conf nova project_domain_name Default
+crudini --set /etc/neutron/neutron.conf nova user_domain_name Default
 crudini --set /etc/neutron/neutron.conf nova region_name RegionOne
 crudini --set /etc/neutron/neutron.conf nova project_name service
 crudini --set /etc/neutron/neutron.conf nova username nova
 crudini --set /etc/neutron/neutron.conf nova password ${STACK_PASSWD}
 
 crudini --set /etc/neutron/neutron.conf oslo_concurrency lock_path /var/lib/neutron/tmp
-
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -98,6 +97,7 @@ crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan local_ip ${SE
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan l2_population true
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup enable_security_group true
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
+
 sysctl net.bridge.bridge-nf-call-iptables
 sysctl net.bridge.bridge-nf-call-ip6tables
 
@@ -120,8 +120,8 @@ crudini --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secr
 echo "Configure the Compute service to use the Networking service ..."
 crudini --set /etc/nova/nova.conf neutron auth_url http://${SET_IP}:5000
 crudini --set /etc/nova/nova.conf neutron auth_type password
-crudini --set /etc/nova/nova.conf neutron project_domain_name default
-crudini --set /etc/nova/nova.conf neutron user_domain_name default
+crudini --set /etc/nova/nova.conf neutron project_domain_name Default
+crudini --set /etc/nova/nova.conf neutron user_domain_name Default
 crudini --set /etc/nova/nova.conf neutron region_name RegionOne
 crudini --set /etc/nova/nova.conf neutron project_name service
 crudini --set /etc/nova/nova.conf neutron username neutron
