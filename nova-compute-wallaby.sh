@@ -17,8 +17,13 @@ read -p "Input Compute IP: " SET_IP
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install KVM ..."
+apt-get install qemu -y
 apt-get install qemu-kvm -y
-apt-get install libvirt-bin -y
+
+#apt-get install libvirt-bin -y
+apt-get install libvirt-daemon-system -y
+apt-get install libvirt-clients -y
+
 apt-get install virtinst -y
 apt-get install bridge-utils -y
 apt-get install cpu-checker -y
