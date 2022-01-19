@@ -543,7 +543,9 @@ sync
 ##########################################
 echo "###################################"
 echo "Insert Nova-Compute ..."
-echo "cp ./OpenStack-Wallaby/nova-check-to-compute.sh ."
+echo "cp ./OpenStack-Wallaby/nova-check-to-compute.sh . "
 echo "./nova-check-to-compute.sh"
 echo "cp ./OpenStack-Wallaby/neutron-controller-wallaby.sh . "
 echo "./neutron-controller-wallaby.sh"
+echo "cp OpenStack-Wallaby/horizon-wallaby.sh . "
+echo "./horizon-wallaby.sh"
