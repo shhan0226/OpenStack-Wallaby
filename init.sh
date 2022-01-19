@@ -200,7 +200,7 @@ fi
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack Mariadb Set ..."
-read -p "[Openstack-Mariadb] Would you like to setting it? <y|n>: " OPENSTACK_DB_SET
+read -p "[Openstack-Mariadb] Would you like to setting it (Controller Node)? <y|n>: " OPENSTACK_DB_SET
 sync
 
 if [ "${OPENSTACK_DB_SET}" = "y" ]; then
@@ -222,7 +222,7 @@ fi
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Message queue ..."
-read -p "[rabbitmq-server] Would you like to install it? <y|n>: " RABBIT_INSTALL
+read -p "[rabbitmq-server] Would you like to install it (Controller Node)? <y|n>: " RABBIT_INSTALL
 sync
 
 if [ "${RABBIT_INSTALL}" = "y" ]; then
@@ -239,7 +239,7 @@ fi
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Memcached ..."
-read -p "[Memcached] Would you like to install it? <y|n>: " MAMCACHED_INSTALL
+read -p "[Memcached] Would you like to install it (Controller Node)? <y|n>: " MAMCACHED_INSTALL
 sync
 
 if [ "${MAMCACHED_INSTALL}" = "y" ]; then
@@ -254,7 +254,7 @@ fi
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install ETCD ..."
-read -p "[Etcd] Would you like to install it? <y|n>: " ETCD_INSTALL
+read -p "[Etcd] Would you like to install it (Controller Node)? <y|n>: " ETCD_INSTALL
 sync
 
 if [ "${ETCD_INSTALL}" = "y" ]; then
