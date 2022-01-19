@@ -59,8 +59,8 @@ crudini --set /etc/nova/nova.conf DEFAULT my_ip ${SET_IP}
 crudini --set /etc/nova/nova.conf api auth_strategy keystone
 
 crudini --set /etc/nova/nova.conf keystone_authtoken www_authenticate_uri http://${CON_IP}:5000/
-#crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://controller:5000/v3
-crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CON_IP}:5000/
+crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CON_IP}:5000/v3
+#crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CON_IP}:5000/
 crudini --set /etc/nova/nova.conf keystone_authtoken memcached_servers ${CON_IP}:11211
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_type password
 crudini --set /etc/nova/nova.conf keystone_authtoken project_domain_name Default
