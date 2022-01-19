@@ -68,14 +68,14 @@ crudini --set /etc/nova/nova.conf database connection mysql+pymysql://nova:${STA
 #crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@controller
 crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${SET_IP}:5672/
 
-crudini --set /etc/nova/nova.conf my_ip ${SET_IP}
-#crudini --set /etc/nova/nova.conf use_neutron true
-#crudini --set /etc/nova/nova.conf firewall_driver nova.virt.firewall.NoopFirewallDriver
+crudini --set /etc/nova/nova.conf DEFAULT my_ip ${SET_IP}
+crudini --set /etc/nova/nova.conf use_neutron true
+crudini --set /etc/nova/nova.conf firewall_driver nova.virt.firewall.NoopFirewallDriver
 
 crudini --set /etc/nova/nova.conf api auth_strategy keystone
 
 crudini --set /etc/nova/nova.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000/
-#crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://controller:5000/v3
+#crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${SET_IP}:5000/v3
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${SET_IP}:5000/
 crudini --set /etc/nova/nova.conf keystone_authtoken memcached_servers ${SET_IP}:11211
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_type password
