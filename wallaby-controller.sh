@@ -302,6 +302,25 @@ export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
 EOF
 
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://${CONTROLLER_IP}:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=myproject
+export OS_USERNAME=myuser
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://${CONTROLLER_IP}:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
+
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack set ..."
@@ -309,7 +328,7 @@ echo "Openstack set ..."
 sync
 
 echo "test1..."
-. admin-openrc
+# . admin-openrc
 
 openstack domain create --description "An Example Domain" example
 openstack project create --domain default  --description "Service Project" service
@@ -332,7 +351,7 @@ openstack --os-auth-url http://${CONTROLLER_IP}:5000/v3 --os-project-domain-name
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 sync
-. admin-openrc
+# . admin-openrc
 openstack token issue
 
 ##########################################
@@ -348,7 +367,7 @@ mysql -e "FLUSH PRIVILEGES"
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack Glance ..."
-. admin-openrc
+# . admin-openrc
 
 openstack user create --domain default --password ${STACK_PASSWD} glance
 openstack role add --project service --user glance admin
@@ -392,7 +411,8 @@ service glance-api restart
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "download img"
-. admin-openrc
+# . admin-openrc
+
 wget http://download.cirros-cloud.net/0.5.1/cirros-0.5.1-arm-disk.img
 sync
 
@@ -402,9 +422,8 @@ echo "create image ..."
 systemctl daemon-reload
 service glance-api restart
 sync
-. admin-openrc
+# . admin-openrc
 openstack image list
-
 #glance image-create --name "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --visibility=public
 openstack image create "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --public
 sync
@@ -424,7 +443,7 @@ mysql -e "FLUSH PRIVILEGES"
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack Placement ..."
-. admin-openrc
+# . admin-openrc
 
 openstack user create --domain default --password ${STACK_PASSWD} placement
 openstack role add --project service --user placement admin
@@ -461,7 +480,7 @@ su -s /bin/sh -c "placement-manage db sync" placement
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Service restart"
 service apache2 restart
-. admin-openrc
+# . admin-openrc
 placement-status upgrade check
 
 ##########################################
@@ -494,7 +513,7 @@ mysql -e "FLUSH PRIVILEGES"
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack Nova ..."
-. admin-openrc
+# . admin-openrc
 
 openstack user create --domain default --password ${STACK_PASSWD} nova
 
