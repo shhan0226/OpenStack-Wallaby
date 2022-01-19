@@ -247,7 +247,7 @@ mysql -e "FLUSH PRIVILEGES"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Keystone ..."
 apt install keystone -y
-# apt install -y apache2 libapache2-mod-wsgi-py3 python3-oauth2client
+apt install -y apache2 libapache2-mod-wsgi-py3 python3-oauth2client
 crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@${CONTROLLER_IP}/keystone
 crudini --set /etc/keystone/keystone.conf token provider fernet
 
@@ -266,6 +266,9 @@ keystone-manage bootstrap --bootstrap-password ${STACK_PASSWD} --bootstrap-admin
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+
+systemctl daemon-reload
+
 echo "apache2 ..."
 echo "ServerName controller" >> /etc/apache2/apache2.conf
 cd ~
@@ -357,6 +360,7 @@ crudini --set /etc/glance/glance-api.conf keystone_authtoken user_domain_name De
 crudini --set /etc/glance/glance-api.conf keystone_authtoken project_name service
 crudini --set /etc/glance/glance-api.conf keystone_authtoken username glance
 crudini --set /etc/glance/glance-api.conf keystone_authtoken password ${STACK_PASSWD}
+
 crudini --set /etc/glance/glance-api.conf paste_deploy flavor keystone
 crudini --set /etc/glance/glance-api.conf glance_store stores file,http
 crudini --set /etc/glance/glance-api.conf glance_store default_store file
@@ -382,12 +386,17 @@ sync
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "create image ..."
+systemctl daemon-reload
 service glance-api restart
 sync
 . admin-openrc
-glance image-create --name "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --visibility=public
+openstack image list
+
+#glance image-create --name "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --visibility=public
+openstack image create "cirros" --file cirros-0.5.1-arm-disk.img --disk-format qcow2 --container-format bare --public
 sync
-glance image-list
+#glance image-list
+openstack image list
 
 ##########################################
 # Placement
