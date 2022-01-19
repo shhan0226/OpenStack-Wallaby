@@ -24,10 +24,12 @@ mysql -e "FLUSH PRIVILEGES"
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo " Openstack Reg. ..."
-# . admin-openrc
-sudo sh admin-openrc
+. admin-openrc
+# sudo sh admin-openrc
 openstack user create --domain default --password ${STACK_PASSWD} neutron
+
 openstack role add --project service --user neutron admin
+
 openstack service create --name neutron --description "OpenStack Networking" network
 
 openstack endpoint create --region RegionOne network public http://${SET_IP}:9696
@@ -51,9 +53,8 @@ crudini --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
 crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router
 crudini --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips true
 
-## crudini --set /etc/neutron/neutron.conf DEFAULT dhcp_agent_notification true
-
 crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${SET_IP}
+
 crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
 
 crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000
@@ -133,15 +134,19 @@ crudini --set /etc/nova/nova.conf neutron metadata_proxy_shared_secret ${STACK_P
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Neutron DB Create ..."
-su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
+su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf \
+  --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
+#su -s /bin/sh -c "neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugins/ml2/ml2_conf.ini upgrade head" neutron
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Service restart ..."
 service nova-api restart
+
 service neutron-server restart
 service neutron-linuxbridge-agent restart
 service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
+
 service neutron-l3-agent restart
 sync
