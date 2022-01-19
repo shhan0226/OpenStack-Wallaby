@@ -50,6 +50,7 @@ echo "ubuntu 20.04 ........."
 apt install python3-pip -y
 sudo apt install net-tools -y
 sudo apt install -y software-properties-common build-essential python3 python3-pip python-is-python3 libgtk-3-dev python3-etcd3gw
+sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
 
 ##################################
 # Install git
