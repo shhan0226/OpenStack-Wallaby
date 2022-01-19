@@ -526,6 +526,9 @@ crudini --set /etc/nova/nova.conf placement auth_url http://${CONTROLLER_IP}:500
 crudini --set /etc/nova/nova.conf placement username placement
 crudini --set /etc/nova/nova.conf placement password ${STACK_PASSWD}
 
+crudini --set /etc/nova/nova.conf DEFAULT use_neutron true
+crudini --set /etc/nova/nova.conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
+
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "DB REG."
