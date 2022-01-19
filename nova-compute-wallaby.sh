@@ -51,16 +51,13 @@ apt install nova-compute -y
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "NOVA Conf. ..."
 
-crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:stack@${CON_IP}
-crudini --set /etc/nova/nova.conf DEFAULT my_ip ${SET_IP}
-#crudini --set /etc/nova/nova.conf DEFAULT use_neutron true
-#crudini --set /etc/nova/nova.conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
+crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${CON_IP}
 
 crudini --set /etc/nova/nova.conf api auth_strategy keystone
 
 crudini --set /etc/nova/nova.conf keystone_authtoken www_authenticate_uri http://${CON_IP}:5000/
-crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CON_IP}:5000/v3
-#crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CON_IP}:5000/
+crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CON_IP}:5000/
+#crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CON_IP}:5000/v3
 crudini --set /etc/nova/nova.conf keystone_authtoken memcached_servers ${CON_IP}:11211
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_type password
 crudini --set /etc/nova/nova.conf keystone_authtoken project_domain_name Default
@@ -69,10 +66,16 @@ crudini --set /etc/nova/nova.conf keystone_authtoken project_name service
 crudini --set /etc/nova/nova.conf keystone_authtoken username nova
 crudini --set /etc/nova/nova.conf keystone_authtoken password ${STACK_PASSWD}
 
+crudini --set /etc/nova/nova.conf DEFAULT my_ip ${SET_IP}
+
 crudini --set /etc/nova/nova.conf vnc enabled true
 crudini --set /etc/nova/nova.conf vnc server_listen 0.0.0.0
 crudini --set /etc/nova/nova.conf vnc server_proxyclient_address \$my_ip
 crudini --set /etc/nova/nova.conf vnc novncproxy_base_url http://${CON_IP}:6080/vnc_auto.html
+
+##
+crudini --set /etc/nova/nova.conf DEFAULT use_neutron true
+crudini --set /etc/nova/nova.conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
 
 crudini --set /etc/nova/nova.conf glance api_servers http://${CON_IP}:9292
 
