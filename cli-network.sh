@@ -44,7 +44,7 @@ openstack network create --share --external --provider-network-type flat --provi
 . admin-openrc
 ifconfig
 echo "external sub net..."
-openstack subnet create --subnet-range 192.168.0.0/22 --no-dhcp --gateway 192.168.0.1 --network external --dns-nameserver 8.8.8.8 --allocation-pool start=192.168.1.100,end=192.168.1.110 external-subnet
+openstack subnet create --subnet-range 192.168.0.0/22 --no-dhcp --gateway 192.168.0.1 --network external --dns-nameserver 8.8.8.8 --allocation-pool start=192.168.0.190,end=192.168.0.200 external-subnet
 
 sync
 
@@ -68,7 +68,7 @@ sync
 . admin-openrc
 sync
 echo "insternal sub net..."
-openstack subnet create --subnet-range 172.16.0.0/24 --dhcp --network internal --dns-nameserver 8.8.8.8 internal-subnet
+openstack subnet create --subnet-range 172.16.1.0/24 --dhcp --network internal --dns-nameserver 8.8.8.8 internal-subnet
 sync
 
 
