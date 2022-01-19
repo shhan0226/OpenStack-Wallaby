@@ -24,7 +24,8 @@ mysql -e "FLUSH PRIVILEGES"
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo " Openstack Reg. ..."
-. admin-openrc
+# . admin-openrc
+sudo sh admin-openrc
 openstack user create --domain default --password ${STACK_PASSWD} neutron
 openstack role add --project service --user neutron admin
 openstack service create --name neutron --description "OpenStack Networking" network
