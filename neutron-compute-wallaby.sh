@@ -50,8 +50,8 @@ crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup firew
 sysctl net.bridge.bridge-nf-call-iptables
 sysctl net.bridge.bridge-nf-call-ip6tables
 
-#crudini --set /etc/nova/nova.conf neutron url http://controller:9696
 crudini --set /etc/nova/nova.conf neutron auth_url http://${CON_IP}:5000
+#crudini --set /etc/nova/nova.conf neutron url http://controller:9696
 crudini --set /etc/nova/nova.conf neutron auth_type password
 crudini --set /etc/nova/nova.conf neutron project_domain_name Default
 crudini --set /etc/nova/nova.conf neutron user_domain_name Default
