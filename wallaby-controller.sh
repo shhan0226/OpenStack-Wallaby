@@ -50,7 +50,7 @@ echo "ubuntu 20.04 ........."
 apt install python3-pip -y
 sudo apt install net-tools -y
 sudo apt install -y software-properties-common build-essential python3 python3-pip python-is-python3 libgtk-3-dev python3-etcd3gw
-sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
+# sudo apt install -y libcanberra-gtk-module libcanberra-gtk3-module
 
 ##################################
 # Install git
@@ -234,6 +234,8 @@ echo ">"
 echo "----------------------------------------------------------"
 echo "THE END !!!"
 
+sync
+
 ##########################################
 # keystone
 ##########################################
@@ -328,25 +330,33 @@ echo "Openstack set ..."
 sync
 
 echo "test1..."
-# . admin-openrc
-
+# . admin-openrco
+sync
 openstack domain create --description "An Example Domain" example
+sync
 openstack project create --domain default  --description "Service Project" service
+sync
 openstack project create --domain default --description "Demo Project" myproject
+sync
 openstack user create --domain default --password ${STACK_PASSWD} myuser
-
+sync
 
 echo "test2..."
 
 openstack role create myrole
+sync
 openstack role add --project myproject --user myuser myrole
+sync
 
 
 echo "test3..."
 
 unset OS_AUTH_URL OS_PASSWORD
+sync
 openstack --os-auth-url http://${CONTROLLER_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name admin --os-username admin token issue
+sync
 openstack --os-auth-url http://${CONTROLLER_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name myproject --os-username myuser token issue
+sync
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
@@ -384,7 +394,8 @@ apt install glance -y
 
 crudini --set /etc/glance/glance-api.conf database connection mysql+pymysql://glance:${STACK_PASSWD}@${CONTROLLER_IP}/glance
 crudini --set /etc/glance/glance-api.conf keystone_authtoken www_authenticate_uri http://${CONTROLLER_IP}:5000
-crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://${CONTROLLER_IP}:5000
+#crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://${CONTROLLER_IP}:5000
+crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://${CONTROLLER_IP}:5000/v3
 crudini --set /etc/glance/glance-api.conf keystone_authtoken memcached_servers ${CONTROLLER_IP}:11211
 crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_type password
 crudini --set /etc/glance/glance-api.conf keystone_authtoken project_domain_name Default
@@ -532,9 +543,11 @@ apt install -y nova-api nova-conductor nova-novncproxy nova-scheduler
 
 crudini --set /etc/nova/nova.conf api_database connection mysql+pymysql://nova:${STACK_PASSWD}@${CONTROLLER_IP}/nova_api
 crudini --set /etc/nova/nova.conf database connection mysql+pymysql://nova:${STACK_PASSWD}@${CONTROLLER_IP}/nova
+#crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@{CONTROLLER_IP}
 crudini --set /etc/nova/nova.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${CONTROLLER_IP}:5672/
 crudini --set /etc/nova/nova.conf api auth_strategy keystone
 crudini --set /etc/nova/nova.conf keystone_authtoken www_authenticate_uri http://${CONTROLLER_IP}:5000/
+#crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${SET_IP}:5000/v3
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_url http://${CONTROLLER_IP}:5000/
 crudini --set /etc/nova/nova.conf keystone_authtoken memcached_servers ${CONTROLLER_IP}:11211
 crudini --set /etc/nova/nova.conf keystone_authtoken auth_type password
