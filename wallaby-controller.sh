@@ -247,7 +247,7 @@ mysql -e "FLUSH PRIVILEGES"
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Keystone ..."
 apt install keystone -y
-apt install -y apache2 libapache2-mod-wsgi-py3 python3-oauth2client
+#apt install -y apache2 libapache2-mod-wsgi-py3 python3-oauth2client
 crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@${CONTROLLER_IP}/keystone
 crudini --set /etc/keystone/keystone.conf token provider fernet
 
@@ -304,14 +304,25 @@ EOF
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack set ..."
+
+sync
+
+echo "test1..."
 . admin-openrc
 
 openstack domain create --description "An Example Domain" example
 openstack project create --domain default  --description "Service Project" service
 openstack project create --domain default --description "Demo Project" myproject
 openstack user create --domain default --password ${STACK_PASSWD} myuser
+
+
+echo "test2..."
+
 openstack role create myrole
 openstack role add --project myproject --user myuser myrole
+
+
+echo "test3..."
 
 unset OS_AUTH_URL OS_PASSWORD
 openstack --os-auth-url http://${CONTROLLER_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name admin --os-username admin token issue
@@ -319,6 +330,7 @@ openstack --os-auth-url http://${CONTROLLER_IP}:5000/v3 --os-project-domain-name
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+sync
 . admin-openrc
 openstack token issue
 
