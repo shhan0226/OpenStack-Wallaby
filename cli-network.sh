@@ -20,7 +20,7 @@ fi
 ##################################
 apt install wget -y
 # wget https://cloud-images.ubuntu.com/bionic/current/bionic-server-cloudimg-arm64.img
-wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-amd64.img
+wget https://cloud-images.ubuntu.com/focal/current/focal-server-cloudimg-arm64.img
 sync
 
 
@@ -157,10 +157,12 @@ openstack flavor list
 echo "image create..."
 #openstack image create "ubuntu1804" --file ./bionic-server-cloudimg-arm64.img --disk-format qcow2 --public
 #glance image-create --name "ubuntu1804" --file ./bionic-server-cloudimg-arm64.img --disk-format qcow2 --container-format bare --visibility=public
-glance image-create --name "ubuntu2004" --file ./focal-server-cloudimg-amd64.img --disk-format qcow2 --container-format bare --visibility=public
+
+glance image-create --name "ubuntu2004" --file ./focal-server-cloudimg-arm64.img --disk-format qcow2 --container-format bare --visibility=public
 
 echo "image show..."
 #openstack image show ubuntu1804
+
 glance image-list
 
 sync
