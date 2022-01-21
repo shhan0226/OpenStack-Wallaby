@@ -289,8 +289,8 @@ if [ "${ETCD_INSTALL}" = "y" ]; then
 	touch /etc/etcd/etcd.conf.yml
 	echo "name: controller" >> /etc/etcd/etcd.conf.yml
 	echo "data-dir: /var/lib/etcd" >> /etc/etcd/etcd.conf.yml
-	echo "initial-cluster-state: \'new\'" >> /etc/etcd/etcd.conf.yml
-	echo "initial-cluster-token: \'etcd-cluster-01\'" >> /etc/etcd/etcd.conf.yml
+	echo "initial-cluster-state: 'new'" >> /etc/etcd/etcd.conf.yml
+	echo "initial-cluster-token: 'etcd-cluster-01'" >> /etc/etcd/etcd.conf.yml
 	echo "initial-cluster: controller=http://${SET_IP}:2380" >> /etc/etcd/etcd.conf.yml
 	echo "initial-advertise-peer-urls: http://${SET_IP}:2380" >> /etc/etcd/etcd.conf.yml
 	echo "advertise-client-urls: http://${SET_IP}:2379" >> /etc/etcd/etcd.conf.yml
