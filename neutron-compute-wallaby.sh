@@ -26,8 +26,8 @@ crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri 
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://${CON_IP}:5000
 crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers ${CON_IP}:11211
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_type password
-crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name default
-crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name default
+crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name Default
+crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name Default
 crudini --set /etc/neutron/neutron.conf keystone_authtoken project_name service 
 crudini --set /etc/neutron/neutron.conf keystone_authtoken username neutron
 crudini --set /etc/neutron/neutron.conf keystone_authtoken password ${STACK_PASSWD}
