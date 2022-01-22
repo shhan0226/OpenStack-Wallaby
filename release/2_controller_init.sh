@@ -65,7 +65,6 @@ service memcached restart
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install ETCD ..."
 
-if [ "${ETCD_INSTALL}" = "y" ]; then
 sync
 wget https://github.com/etcd-io/etcd/releases/download/v3.4.1/etcd-v3.4.1-linux-arm64.tar.gz
 tar -xvf etcd-v3.4.1-linux-arm64.tar.gz
