@@ -26,6 +26,45 @@ echo "$STACK_PASSWD"
 sync
 
 ##########################################
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+echo "Input admin-openrc"
+cat << EOF > admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+EOF
+sync
+cat admin-openrc
+
+echo "Input demo-openrc"
+cat << EOF > demo-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=myproject
+export OS_USERNAME=myuser
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+EOF
+sync
+cat demo-openrc
+
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
+##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Keystone Reg. Mariadb ..."
 mysql -e "CREATE DATABASE keystone;"
@@ -38,7 +77,8 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Install Keystone ..."
 apt install keystone -y
 
-crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@${SET_IP}/keystone
+crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@controller/keystone
+#crudini --set /etc/keystone/keystone.conf database connection mysql+pymysql://keystone:${STACK_PASSWD}@${SET_IP}/keystone
 crudini --set /etc/keystone/keystone.conf token provider fernet
 sync
 ##########################################
@@ -53,17 +93,22 @@ sync
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Keystone Bootstrap ..."
 keystone-manage bootstrap --bootstrap-password ${STACK_PASSWD} \
-  --bootstrap-admin-url http://${SET_IP}:5000/v3/ \
-  --bootstrap-internal-url http://${SET_IP}:5000/v3/ \
-  --bootstrap-public-url http://${SET_IP}:5000/v3/ \
+  --bootstrap-admin-url http://controller:5000/v3/ \
+  --bootstrap-internal-url http://controller:5000/v3/ \
+  --bootstrap-public-url http://controller:5000/v3/ \
   --bootstrap-region-id RegionOne
 
+#  --bootstrap-admin-url http://${SET_IP}:5000/v3/ \
+#  --bootstrap-internal-url http://${SET_IP}:5000/v3/ \
+#  --bootstrap-public-url http://${SET_IP}:5000/v3/ \
+#  --bootstrap-region-id RegionOne
 sync
+
 ##########################################
-#echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-#echo "devkit UI ..."
-#systemctl stop devkit_flask.service
-#systemctl daemon-reload
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+echo "devkit UI ..."
+systemctl stop devkit_flask.service
+systemctl daemon-reload
 
 ##########################################
 echo "apache2 ..."
@@ -74,34 +119,17 @@ service apache2 restart
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "Input admin-openrc"
-cat << EOF > admin-openrc
+echo "Openstack set ..."
+
+#. admin-openrc
 export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
 export OS_PROJECT_NAME=admin
 export OS_USERNAME=admin
 export OS_PASSWORD=${STACK_PASSWD}
-export OS_AUTH_URL=http://${SET_IP}:5000/v3
+export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
-EOF
-
-echo "Input demo-openrc"
-cat << EOF > demo-openrc
-export OS_PROJECT_DOMAIN_NAME=Default
-export OS_USER_DOMAIN_NAME=Default
-export OS_PROJECT_NAME=myproject
-export OS_USERNAME=myuser
-export OS_PASSWORD=${STACK_PASSWD}
-export OS_AUTH_URL=http://${SET_IP}:5000/v3
-export OS_IDENTITY_API_VERSION=3
-export OS_IMAGE_API_VERSION=2
-EOF
-
-##########################################
-echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-echo "Openstack set ..."
-. admin-openrc
 
 openstack domain create --description "An Example Domain" example
 sync
@@ -115,14 +143,33 @@ openstack role create myrole
 sync
 openstack role add --project myproject --user myuser myrole
 sync
+
+
 unset OS_AUTH_URL OS_PASSWORD
-sync
-openstack --os-auth-url http://${SET_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name admin --os-username admin token issue
-sync
-openstack --os-auth-url http://${SET_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name myproject --os-username myuser token issue
+
+openstack --os-auth-url http://controller:5000/v3 \
+  --os-project-domain-name Default --os-user-domain-name Default \
+  --os-project-name admin --os-username admin token issue
+
+#openstack --os-auth-url http://${SET_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name admin --os-username admin token issue
+
+openstack --os-auth-url http://controller:5000/v3 \
+  --os-project-domain-name Default --os-user-domain-name Default \
+  --os-project-name myproject --os-username myuser token issue
+
+#openstack --os-auth-url http://${SET_IP}:5000/v3 --os-project-domain-name Default --os-password ${STACK_PASSWD} --os-user-domain-name Default --os-project-name myproject --os-username myuser token issue
 sync
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
-. admin-openrc
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
 openstack token issue

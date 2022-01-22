@@ -25,6 +25,16 @@ read -p "What is openstack passwrd? : " STACK_PASSWD
 echo "$STACK_PASSWD"
 sync
 
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Placement Reg. Mariadb ..."
@@ -37,7 +47,15 @@ sync
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack Placement ..."
-. admin-openrc
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
 
 openstack user create --domain default --password ${STACK_PASSWD} placement
 openstack role add --project service --user placement admin
@@ -78,15 +96,33 @@ echo "Service restart"
 service apache2 restart
 sync
 
-. admin-openrc
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
 placement-status upgrade check
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "osc ... "
-. admin-openrc
-
 pip3 install osc-placement
+
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
 openstack --os-placement-api-version 1.2 resource class list --sort-column name
 openstack --os-placement-api-version 1.6 trait list --sort-column name
 sync

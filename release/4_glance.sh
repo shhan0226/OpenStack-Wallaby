@@ -25,6 +25,16 @@ read -p "What is openstack passwrd? : " STACK_PASSWD
 echo "$STACK_PASSWD"
 sync
 
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "GLANCE Reg. Mariadb ..."
@@ -37,7 +47,16 @@ sync
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack Glance ..."
-. admin-openrc
+
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
 
 openstack user create --domain default --password ${STACK_PASSWD} glance
 sync
@@ -77,25 +96,56 @@ sync
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Input DB ..."
+
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
 su -s /bin/sh -c "glance-manage db_sync" glance
 sync
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "service restart"
+
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
 service glance-api restart
 sync
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "download img"
-. admin-openrc
 
 wget http://download.cirros-cloud.net/0.4.0/cirros-0.4.0-x86_64-disk.img
 #wget http://download.cirros-cloud.net/0.5.1/cirros-0.5.1-arm-disk.img
 sync
 
-. admin-openrc
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
+
 
 echo "create image ..."
 glance image-create --name "cirros" \
