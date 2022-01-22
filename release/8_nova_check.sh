@@ -1,8 +1,13 @@
 #!/bin/bash
 
+read -p "What is openstack passwrd? : " STACK_PASSWD
+echo "$STACK_PASSWD"
+sync
+
 ##################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "compute server list ...."
+
 #. admin-openrc
 export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
