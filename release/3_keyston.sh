@@ -120,6 +120,7 @@ service apache2 restart
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Openstack set ..."
+echo "${STACK_PASSWD}"
 
 #. admin-openrc
 export OS_PROJECT_DOMAIN_NAME=Default
@@ -137,13 +138,15 @@ openstack project create --domain default  --description "Service Project" servi
 sync
 openstack project create --domain default --description "Demo Project" myproject
 sync
-openstack user create --domain default --password ${STACK_PASSWD}  myuser
+openstack user create --domain default --password ${STACK_PASSWD} myuser
 sync
 openstack role create myrole
 sync
 openstack role add --project myproject --user myuser myrole
 sync
 
+echo "Openstack AUTH ..."
+echo "${STACK_PASSWD}"
 
 unset OS_AUTH_URL OS_PASSWORD
 
@@ -162,6 +165,7 @@ sync
 
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
+echo "${STACK_PASSWD}"
 #. admin-openrc
 export OS_PROJECT_DOMAIN_NAME=Default
 export OS_USER_DOMAIN_NAME=Default
