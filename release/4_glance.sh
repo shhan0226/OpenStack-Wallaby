@@ -64,11 +64,21 @@ openstack role add --project service --user glance admin
 sync
 openstack service create --name glance --description "OpenStack Image" image
 sync
-openstack endpoint create --region RegionOne image public http://${SET_IP}:9292
-sync
-openstack endpoint create --region RegionOne image internal http://${SET_IP}:9292
-sync
-openstack endpoint create --region RegionOne image admin http://${SET_IP}:9292
+
+openstack endpoint create --region RegionOne \
+  image public http://controller:9292
+
+#openstack endpoint create --region RegionOne image public http://${SET_IP}:9292
+
+openstack endpoint create --region RegionOne \
+  image internal http://controller:9292
+
+#openstack endpoint create --region RegionOne image internal http://${SET_IP}:9292
+
+openstack endpoint create --region RegionOne \
+  image admin http://controller:9292
+
+#openstack endpoint create --region RegionOne image admin http://${SET_IP}:9292
 sync
 
 ##########################################
@@ -77,16 +87,21 @@ echo "Install Glance ..."
 apt install glance -y
 sync
 
-crudini --set /etc/glance/glance-api.conf database connection mysql+pymysql://glance:${STACK_PASSWD}@${SET_IP}/glance
-crudini --set /etc/glance/glance-api.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000
-crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://${SET_IP}:5000
-crudini --set /etc/glance/glance-api.conf keystone_authtoken memcached_servers ${SET_IP}:11211
+crudini --set /etc/glance/glance-api.conf database connection mysql+pymysql://glance:${STACK_PASSWD}@controller/glance
+#crudini --set /etc/glance/glance-api.conf database connection mysql+pymysql://glance:${STACK_PASSWD}@${SET_IP}/glance
+crudini --set /etc/glance/glance-api.conf keystone_authtoken www_authenticate_uri http://controller:5000
+#crudini --set /etc/glance/glance-api.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000
+crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://controller:5000
+#crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_url http://${SET_IP}:5000
+crudini --set /etc/glance/glance-api.conf keystone_authtoken memcached_servers controller:11211
+#crudini --set /etc/glance/glance-api.conf keystone_authtoken memcached_servers ${SET_IP}:11211
 crudini --set /etc/glance/glance-api.conf keystone_authtoken auth_type password
 crudini --set /etc/glance/glance-api.conf keystone_authtoken project_domain_name Default
 crudini --set /etc/glance/glance-api.conf keystone_authtoken user_domain_name Default
 crudini --set /etc/glance/glance-api.conf keystone_authtoken project_name service
 crudini --set /etc/glance/glance-api.conf keystone_authtoken username glance
 crudini --set /etc/glance/glance-api.conf keystone_authtoken password ${STACK_PASSWD}
+
 crudini --set /etc/glance/glance-api.conf paste_deploy flavor keystone
 crudini --set /etc/glance/glance-api.conf glance_store stores file,http
 crudini --set /etc/glance/glance-api.conf glance_store default_store file
@@ -144,8 +159,6 @@ export OS_PASSWORD=${STACK_PASSWD}
 export OS_AUTH_URL=http://controller:5000/v3
 export OS_IDENTITY_API_VERSION=3
 export OS_IMAGE_API_VERSION=2
-
-
 
 echo "create image ..."
 glance image-create --name "cirros" \
