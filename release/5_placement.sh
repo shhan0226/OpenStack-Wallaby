@@ -60,9 +60,21 @@ export OS_IMAGE_API_VERSION=2
 openstack user create --domain default --password ${STACK_PASSWD} placement
 openstack role add --project service --user placement admin
 openstack service create --name placement --description "Placement API" placement
-openstack endpoint create --region RegionOne placement public http://${SET_IP}:8778
-openstack endpoint create --region RegionOne placement internal http://${SET_IP}:8778
-openstack endpoint create --region RegionOne placement admin http://${SET_IP}:8778
+
+openstack endpoint create --region RegionOne \
+  placement public http://controller:8778
+
+#openstack endpoint create --region RegionOne placement public http://${SET_IP}:8778
+
+openstack endpoint create --region RegionOne \
+  placement internal http://controller:8778
+
+#openstack endpoint create --region RegionOne placement internal http://${SET_IP}:8778
+
+ openstack endpoint create --region RegionOne \
+  placement admin http://controller:8778
+
+#openstack endpoint create --region RegionOne placement admin http://${SET_IP}:8778
 sync
 
 ##########################################
@@ -72,10 +84,13 @@ echo "Install Placement ..."
 apt install placement-api -y
 sync
 
-crudini --set /etc/placement/placement.conf placement_database connection mysql+pymysql://placement:${STACK_PASSWD}@${SET_IP}/placement
+crudini --set /etc/placement/placement.conf placement_database connection mysql+pymysql://placement:${STACK_PASSWD}@controller/placement
+#crudini --set /etc/placement/placement.conf placement_database connection mysql+pymysql://placement:${STACK_PASSWD}@${SET_IP}/placement
 crudini --set /etc/placement/placement.conf api auth_strategy keystone
-crudini --set /etc/placement/placement.conf keystone_authtoken auth_url http://${SET_IP}:5000/v3   
-crudini --set /etc/placement/placement.conf keystone_authtoken memcached_servers ${SET_IP}:11211
+crudini --set /etc/placement/placement.conf keystone_authtoken auth_url http://controller:5000/v3
+#crudini --set /etc/placement/placement.conf keystone_authtoken auth_url http://${SET_IP}:5000/v3
+crudini --set /etc/placement/placement.conf keystone_authtoken memcached_servers controller:11211
+#crudini --set /etc/placement/placement.conf keystone_authtoken memcached_servers ${SET_IP}:11211
 crudini --set /etc/placement/placement.conf keystone_authtoken auth_type password
 crudini --set /etc/placement/placement.conf keystone_authtoken project_domain_name Default
 crudini --set /etc/placement/placement.conf keystone_authtoken user_domain_name Default
@@ -87,6 +102,17 @@ sync
 ##########################################
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "REG. DB  Placement ..."
+
+#. admin-openrc
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_NAME=admin
+export OS_USERNAME=admin
+export OS_PASSWORD=${STACK_PASSWD}
+export OS_AUTH_URL=http://controller:5000/v3
+export OS_IDENTITY_API_VERSION=3
+export OS_IMAGE_API_VERSION=2
+
 su -s /bin/sh -c "placement-manage db sync" placement
 sync
 

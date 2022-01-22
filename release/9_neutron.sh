@@ -53,9 +53,21 @@ sync
 openstack user create --domain default --password ${STACK_PASSWD} neutron
 openstack role add --project service --user neutron admin
 openstack service create --name neutron --description "OpenStack Networking" network
-openstack endpoint create --region RegionOne network public http://${SET_IP}:9696
-openstack endpoint create --region RegionOne network internal http://${SET_IP}:9696
-openstack endpoint create --region RegionOne network admin http://${SET_IP}:9696
+
+openstack endpoint create --region RegionOne \
+  network public http://controller:9696
+
+#openstack endpoint create --region RegionOne network public http://${SET_IP}:9696
+
+openstack endpoint create --region RegionOne \
+  network internal http://controller:9696
+
+#openstack endpoint create --region RegionOne network internal http://${SET_IP}:9696
+
+openstack endpoint create --region RegionOne \
+  network admin http://controller:9696
+
+#openstack endpoint create --region RegionOne network admin http://${SET_IP}:9696
 sync
 
 ##########################################
@@ -69,24 +81,33 @@ apt install neutron-dhcp-agent -y
 apt install neutron-metadata-agent -y
 sync
 
-crudini --set /etc/neutron/neutron.conf database connection mysql+pymysql://neutron:${STACK_PASSWD}@${SET_IP}/neutron
+crudini --set /etc/neutron/neutron.conf database connection mysql+pymysql://neutron:${STACK_PASSWD}@controller/neutron
+#crudini --set /etc/neutron/neutron.conf database connection mysql+pymysql://neutron:${STACK_PASSWD}@${SET_IP}/neutron
 crudini --set /etc/neutron/neutron.conf DEFAULT core_plugin ml2
 crudini --set /etc/neutron/neutron.conf DEFAULT service_plugins router
 crudini --set /etc/neutron/neutron.conf DEFAULT allow_overlapping_ips true
-crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${SET_IP}
+crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@controller
+#crudini --set /etc/neutron/neutron.conf DEFAULT transport_url rabbit://openstack:${STACK_PASSWD}@${SET_IP}
 crudini --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
-crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000
-crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://${SET_IP}:5000
-crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers ${SET_IP}:11211
+
+crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://controller:5000
+#crudini --set /etc/neutron/neutron.conf keystone_authtoken www_authenticate_uri http://${SET_IP}:5000
+crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://controller:5000
+#crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_url http://${SET_IP}:5000
+crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers controller:11211
+#crudini --set /etc/neutron/neutron.conf keystone_authtoken memcached_servers ${SET_IP}:11211
 crudini --set /etc/neutron/neutron.conf keystone_authtoken auth_type password
 crudini --set /etc/neutron/neutron.conf keystone_authtoken project_domain_name Default
 crudini --set /etc/neutron/neutron.conf keystone_authtoken user_domain_name Default
 crudini --set /etc/neutron/neutron.conf keystone_authtoken project_name service
 crudini --set /etc/neutron/neutron.conf keystone_authtoken username neutron
 crudini --set /etc/neutron/neutron.conf keystone_authtoken password ${STACK_PASSWD}
+
 crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_status_changes true
 crudini --set /etc/neutron/neutron.conf DEFAULT notify_nova_on_port_data_changes true
-crudini --set /etc/neutron/neutron.conf nova auth_url http://${SET_IP}:5000
+
+crudini --set /etc/neutron/neutron.conf nova auth_url http://controller:5000
+#crudini --set /etc/neutron/neutron.conf nova auth_url http://${SET_IP}:5000
 crudini --set /etc/neutron/neutron.conf nova auth_type password
 crudini --set /etc/neutron/neutron.conf nova project_domain_name Default
 crudini --set /etc/neutron/neutron.conf nova user_domain_name Default
@@ -111,9 +132,10 @@ sync
 
 echo "Configure the Linux bridge agent ..."
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini linux_bridge physical_interface_mappings provider:${PROVIDER}
-crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan enable_vxlan true 
+crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan enable_vxlan true
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan local_ip ${SET_IP}
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan l2_population true
+
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup enable_security_group true
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini securitygroup firewall_driver neutron.agent.linux.iptables_firewall.IptablesFirewallDriver
 sync
@@ -137,12 +159,13 @@ echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Neutron Service conf ..."
 
 echo "Configure the metadata agent ..."
-crudini --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_host ${SET_IP}
+crudini --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_host controller
 crudini --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret ${STACK_PASSWD}
 sync
 
 echo "Configure the Compute service to use the Networking service ..."
-crudini --set /etc/nova/nova.conf neutron auth_url http://${SET_IP}:5000
+crudini --set /etc/nova/nova.conf neutron auth_url http://controller:5000
+#crudini --set /etc/nova/nova.conf neutron auth_url http://${SET_IP}:5000
 crudini --set /etc/nova/nova.conf neutron auth_type password
 crudini --set /etc/nova/nova.conf neutron project_domain_name Default
 crudini --set /etc/nova/nova.conf neutron user_domain_name Default
@@ -179,9 +202,11 @@ sync
 echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Service restart ..."
 service nova-api restart
+
 service neutron-server restart
 service neutron-linuxbridge-agent restart
 service neutron-dhcp-agent restart
 service neutron-metadata-agent restart
+
 service neutron-l3-agent restart
 sync
