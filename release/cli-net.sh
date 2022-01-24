@@ -66,7 +66,7 @@ sync
 . admin-openrc
 sync
 echo "insternal sub net..."
-openstack subnet create --subnet-range 172.13.0.0/24 --dhcp --network internal --dns-nameserver 8.8.8.8 internal-subnet
+openstack subnet create --subnet-range 172.16.0.0/24 --dhcp --network internal --dns-nameserver 8.8.8.8 internal-subnet
 sync
 
 
