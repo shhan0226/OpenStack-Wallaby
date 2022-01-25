@@ -130,6 +130,9 @@ crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini ml2_type_vxlan vni_ranges 1:
 crudini --set /etc/neutron/plugins/ml2/ml2_conf.ini securitygroup enable_ipset true
 sync
 
+
+##########################################
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Configure the Linux bridge agent ..."
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini linux_bridge physical_interface_mappings provider:${PROVIDER}
 crudini --set /etc/neutron/plugins/ml2/linuxbridge_agent.ini vxlan enable_vxlan true
@@ -163,7 +166,18 @@ crudini --set /etc/neutron/metadata_agent.ini DEFAULT nova_metadata_host control
 crudini --set /etc/neutron/metadata_agent.ini DEFAULT metadata_proxy_shared_secret ${STACK_PASSWD}
 sync
 
+
+##########################################
+echo ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>"
 echo "Configure the Compute service to use the Networking service ..."
+
+##!![
+crudini --set /etc/nova/nova.conf DEFAULT use_neutron true
+crudini --set /etc/nova/nova.conf DEFAULT firewall_driver nova.virt.firewall.NoopFirewallDriver
+crudini --set /etc/nova/nova.conf neutron url http://controller:9696
+##]
+
+
 crudini --set /etc/nova/nova.conf neutron auth_url http://controller:5000
 #crudini --set /etc/nova/nova.conf neutron auth_url http://${SET_IP}:5000
 crudini --set /etc/nova/nova.conf neutron auth_type password

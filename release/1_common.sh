@@ -47,9 +47,9 @@ apt install -y software-properties-common
 apt install -y build-essential
 apt install -y python3 
 apt install -y python3-pip
+apt install -y libgtk-3-dev
 apt install -y python-is-python3 
-apt install -y libgtk-3-dev 
-apt install -y python3-etcd3gw
+ apt install -y python3-etcd3gw
 
 ##################################
 # Install git
