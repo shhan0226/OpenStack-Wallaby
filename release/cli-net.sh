@@ -151,7 +151,12 @@ openstack flavor list
 . admin-openrc
 
 echo "image create..."
-openstack image create "ubuntu1804" --file ./bionic-server-cloudimg-arm64.img --disk-format qcow2 --public
+
+glance image-create --name "ubuntu1804" \
+        --file bionic-server-cloudimg-arm64.img \
+        --disk-format qcow2 --container-format bare \
+        --visibility=public
+
 
 echo "image show..."
 openstack image show ubuntu1804
