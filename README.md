@@ -1,7 +1,7 @@
 # OpenStack-Wallaby
 Installation Script for OpenStack Stein based on ARM Server (`ubuntu20.04`)
 
-> A new version has been released. Please check the [XENA](https://github.com/shhan0226/OpenStack-Xena)!!!!!!!!!!!!!!!1
+> A new version has been released. Please check the [XENA](https://github.com/shhan0226/OpenStack-Xena) !!!!!!!!!!!!!!!1
 
 </br>
  
